@@ -1,0 +1,23 @@
+# Wrangler state
+.wrangler/
+
+# Old PDFs (generated, not source)
+AI游戏开发调研报告_最终版.pdf
+AI游戏开发调研报告_完整版.pdf
+AI游戏开发调研报告_250601.pdf
+AI_supplement.pdf
+AI_supplement2.pdf
+
+# Python generation scripts (not needed for the report repo)
+generate_report.py
+gen_part1.py
+gen_supplement.py
+
+# Auto-optimize working files
+tracks/phase-01-spec.md
+tracks/phase-01-acceptance.md
+tracks/phase-02-consistency-check.md
+tracks/phase-04-output.md
+tracks/prompt-a/r01.html
+tracks/prompt-b/
+tracks/prompt-c/
