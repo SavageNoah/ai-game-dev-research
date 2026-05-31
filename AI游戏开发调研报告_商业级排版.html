@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI编程工具开发商业化游戏 - 完整调研报告</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#0F172A;--card:#1E293B;--border:#334155;
+    --blue:#1E3A8A;--blue-light:#60A5FA;--blue-mid:#3B82F6;
+    --text:#E2E8F0;--text-dim:#94A3B8;--text-muted:#64748B;
+    --accent:#F59E0B;--green:#10B981;--red:#EF4444;
+    --code-bg:#0D1117;--code-border:#30363D;
+    --radius:8px;
+  }
+  body{
+    background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.8;max-width:960px;margin:0 auto;padding:40px 32px;
+    font-size:16px;-webkit-font-smoothing:antialiased;
+  }
+  @media print{
+    body{background:#fff;color:#1a1a1a;max-width:100%;padding:20px 40px}
+    .cover{background:#1E3A8A!important}
+    h1{color:#1E3A8A!important;border-color:#1E3A8A!important}
+    h2{color:#334155!important}
+    .card,.callout,.code-block{background:#f8fafc!important;color:#1a1a1a!important;border-color:#e2e8f0!important}
+    table thead{background:#1E3A8A!important}
+    table td{color:#1a1a1a!important}
+    .bullet-icon{color:#1E3A8A!important}
+  }
+  h1{
+    color:var(--blue-light);font-size:28px;font-weight:700;
+    border-bottom:2px solid var(--blue);padding-bottom:14px;margin:60px 0 32px;
+    page-break-before:always;letter-spacing:0.5px;
+  }
+  h1:first-of-type{page-break-before:auto}
+  h2{color:var(--text-dim);font-size:22px;font-weight:600;margin:40px 0 20px;letter-spacing:0.3px}
+  h3{color:#CBD5E1;font-size:18px;font-weight:600;margin:28px 0 14px}
+  p{margin:12px 0;color:var(--text);line-height:1.8}
+  .cover{
+    background:linear-gradient(135deg,#1E3A8A 0%,#0F172A 100%);
+    border-radius:12px;padding:80px 60px;text-align:center;margin-bottom:60px;
+    page-break-after:always;
+  }
+  .cover h1{border:none;color:#fff;font-size:36px;margin:0 0 12px;page-break-before:auto}
+  .cover .subtitle{color:#94A3B8;font-size:18px;margin:8px 0}
+  .cover .meta{color:#64748B;font-size:14px;margin-top:30px}
+  .cover .divider{width:80px;height:3px;background:var(--blue-light);margin:24px auto;border-radius:2px}
+  .card{
+    background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+    padding:24px;margin:20px 0;
+  }
+  .callout{
+    background:#1C1917;border-left:4px solid var(--accent);
+    padding:20px 24px;margin:24px 0;border-radius:0 var(--radius) var(--radius) 0;
+    color:#FDE68A;font-size:15px;
+  }
+  .callout-green{border-left-color:var(--green);color:#A7F3D0;background:#052E16}
+  .code-block{
+    background:var(--code-bg);border:1px solid var(--code-border);border-radius:6px;
+    padding:18px 20px;margin:16px 0;font-family:"JetBrains Mono","Fira Code",Consolas,monospace;
+    font-size:13px;line-height:1.6;overflow-x:auto;white-space:pre;color:#C9D1D9;
+  }
+  ul{list-style:none;padding-left:0;margin:12px 0}
+  ul li{padding:6px 0 6px 28px;position:relative;line-height:1.7}
+  ul li::before{content:"▸";position:absolute;left:6px;color:var(--blue-light);font-weight:bold}
+  table{border-collapse:collapse;width:100%;margin:20px 0;font-size:14px;border-radius:var(--radius);overflow:hidden}
+  thead{background:var(--blue);color:#fff}
+  thead th{padding:12px 16px;text-align:left;font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:0.5px}
+  tbody tr:nth-child(odd){background:var(--card)}
+  tbody tr:nth-child(even){background:rgba(30,41,59,0.5)}
+  td{padding:10px 16px;border-top:1px solid var(--border);color:var(--text)}
+  th+th,td+td{border-left:1px solid rgba(255,255,255,0.1)}
+  .toc{page-break-after:always}
+  .toc ul li{padding:8px 0 8px 0}
+  .toc ul li::before{display:none}
+  .toc .ch{color:var(--blue-light);font-weight:600;font-size:17px}
+  .toc .sec{color:var(--text-dim);font-size:15px;padding-left:24px}
+  .tag{display:inline-block;background:rgba(59,130,246,0.15);color:var(--blue-light);padding:3px 10px;border-radius:12px;font-size:12px;font-weight:600;margin:2px 4px 2px 0}
+  .stat{text-align:center;padding:32px;margin:20px 4px}
+  .stat .num{font-size:42px;font-weight:800;color:var(--blue-light);line-height:1.2}
+  .stat .label{font-size:14px;color:var(--text-muted);margin-top:8px}
+  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:24px 0}
+  @media(max-width:768px){.stats-grid{grid-template-columns:repeat(2,1fr)}body{padding:20px 16px}h1{font-size:22px}h2{font-size:18px}table{font-size:12px}td,th{padding:8px 12px}.code-block{font-size:11px;padding:12px}}
+  hr{border:none;border-top:1px solid var(--border);margin:32px 0}
+  a{color:var(--blue-light);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .flex-row{display:flex;gap:16px;flex-wrap:wrap}
+  .flex-row>.card{flex:1;min-width:200px}
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <h1>AI编程工具开发商业化游戏</h1>
+  <div style="font-size:24px;color:#E2E8F0;font-weight:700;margin-top:8px">完整调研报告</div>
+  <div class="divider"></div>
+  <div class="subtitle">从零到商业化水准的超级玛丽 / 赛车 + 英语学习游戏</div>
+  <div class="subtitle" style="margin-top:12px;font-size:15px">基于 Codex CLI · Antigravity CLI · Cursor 等AI编程工具</div>
+  <div class="meta">
+    <span class="tag">15+ 信息源</span>
+    <span class="tag">7 大实战案例</span>
+    <span class="tag">30 天路线图</span>
+    <span class="tag">103 页完整内容</span>
+    <div style="margin-top:20px">报告日期：2026年6月1日</div>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+<h1 style="page-break-before:auto">目录</h1>
+<ul>
+  <li><span class="ch">第一章　调研背景与目标</span></li>
+  <li><span class="sec">1.1 核心问题</span></li>
+  <li><span class="sec">1.2 调研范围</span></li>
+  <li><span class="sec">1.3 调研方法论（15+信息源）</span></li>
+  <li><span class="sec">1.4 关键发现摘要</span></li>
+  <li><span class="ch">第二章　AI编程工具全景扫描</span></li>
+  <li><span class="sec">2.1 OpenAI Codex CLI 详解</span></li>
+  <li><span class="sec">2.2 Google Antigravity CLI 详解</span></li>
+  <li><span class="sec">2.3 Cursor IDE 详解</span></li>
+  <li><span class="sec">2.4 工具选择建议矩阵</span></li>
+  <li><span class="ch">第三章　差距诊断：为什么 AI 游戏"能玩但不好玩"</span></li>
+  <li><span class="sec">3.1 原型 vs 商业化差距清单</span></li>
+  <li><span class="sec">3.2 Game Feel 的 12 个核心要素</span></li>
+  <li><span class="sec">3.3 商业化水准量化标准</span></li>
+  <li><span class="ch">第四章　商业化游戏技术架构</span></li>
+  <li><span class="sec">4.1 游戏引擎选型对比</span></li>
+  <li><span class="sec">4.2 平台跳跃游戏完整架构（Phaser 3）</span></li>
+  <li><span class="sec">4.3 3D 赛车游戏架构（Three.js）</span></li>
+  <li><span class="ch">第五章　七大实战案例深度解析</span></li>
+  <li><span class="sec">案例1：fly.pieter.com — 3小时赚 $17,360</span></li>
+  <li><span class="sec">案例2：Gothicvania — Codex 零代码平台跳跃</span></li>
+  <li><span class="sec">案例3-7：BibaDamu / Curve Clash / Star Picker / iOS 7天 / Clue Rush</span></li>
+  <li><span class="ch">第六章　教育游戏设计：英语学习 × 游戏融合</span></li>
+  <li><span class="sec">6.1 游戏化教育理论基础</span></li>
+  <li><span class="sec">6.2 Duolingo Octalysis 八核驱动框架</span></li>
+  <li><span class="sec">6.3 三套融合设计方案</span></li>
+  <li><span class="ch">第七章　美术与音效资源完全指南</span></li>
+  <li><span class="ch">第八章　变现模式与增长策略</span></li>
+  <li><span class="ch">第九章　AI 工具高级使用技巧 + Prompt 库</span></li>
+  <li><span class="ch">第十章　30 天从零到上线路线图</span></li>
+  <li><span class="ch">附录 A：AGENTS.md 完整模板</span></li>
+  <li><span class="ch">附录 B：GDD 游戏设计文档模板</span></li>
+  <li><span class="ch">附录 C：参考资源与链接汇总</span></li>
+</ul>
+</div>
+
+<!-- ===== CH1 ===== -->
+<h1>第一章　调研背景与目标</h1>
+
+<h2>1.1 核心问题</h2>
+<div class="callout">
+  <strong>核心发现：</strong>直接让 Codex CLI 或 Antigravity CLI 生成一款小游戏，结果确实"能玩"，但离商业化水准差距极大。操控手感生硬、画面粗糙、无音效、无留存、无法变现。
+</div>
+<p>本报告旨在回答：如何利用 AI 编程工具，<strong>最快速地</strong>开发出商业化水准的超级玛丽/赛车类游戏，并融入英语学习元素？</p>
+
+<div class="stats-grid">
+  <div class="card stat"><div class="num">15+</div><div class="label">调研信息源</div></div>
+  <div class="card stat"><div class="num">7</div><div class="label">实战案例</div></div>
+  <div class="card stat"><div class="num">12</div><div class="label">Game Feel 要素</div></div>
+  <div class="card stat"><div class="num">30</div><div class="label">天上线路线图</div></div>
+</div>
+
+<h2>1.2 调研范围</h2>
+<ul>
+  <li><strong>AI 工具</strong>：OpenAI Codex CLI、Google Antigravity CLI、Cursor IDE、Claude Code</li>
+  <li><strong>游戏类型</strong>：2D 平台跳跃（类超级玛丽）、3D 赛车竞速</li>
+  <li><strong>教育融合</strong>：英语词汇/语法学习 × 游戏机制</li>
+  <li><strong>商业化标准</strong>：视觉品质、操控手感、音效、变现、留存</li>
+</ul>
+
+<h2>1.3 调研方法论</h2>
+<p>覆盖以下 <strong>15+ 信息源</strong>，多源交叉验证：</p>
+
+<div class="flex-row">
+  <div class="card">
+    <h3>官方文档</h3>
+    <ul>
+      <li>OpenAI 开发者文档 — Codex 最佳实践</li>
+      <li>OpenAI 社区论坛 — Gothicvania 实战</li>
+      <li>Google Cloud 博客 — Antigravity 指南</li>
+      <li>DEV Community — Antigravity 教程</li>
+      <li>note.com AICU — Game Studio 教程</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>开发者社区</h3>
+    <ul>
+      <li>Indie Hackers — 30 条黄金法则</li>
+      <li>Reddit r/codex, r/vibecoding</li>
+      <li>Reddit r/aigamedev — Curve Clash</li>
+      <li>Reddit r/iOSProgramming — 7 天案例</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>行业媒体 & 技术</h3>
+    <ul>
+      <li>36 氪 — Pieter Levels 案例</li>
+      <li>Forbes — Vibe Coding 经济</li>
+      <li>generalistprogrammer.com — Phaser 教程</li>
+      <li>Raw Studio — Duolingo 游戏化分析</li>
+      <li>Playgama/Applixir — 变现策略</li>
+    </ul>
+  </div>
+</div>
+
+<h2>1.4 关键发现摘要</h2>
+<div class="callout callout-green">
+  <strong>核心结论</strong>：AI 工具可以做出商业化游戏，但绝不是"一句话 prompt 搞定"。成功五要素：
+  <br><br>
+  <strong>①</strong> 结构化文档（AGENTS.md + GDD + SKILL.md）<br>
+  <strong>②</strong> 分步迭代开发（非一步到位）<br>
+  <strong>③</strong> 正确引擎选型（Phaser 做 2D，Three.js 做 3D）<br>
+  <strong>④</strong> 使用高质量免费素材（Kenney.nl 等）<br>
+  <strong>⑤</strong> 理解 Game Feel 12 要素（AI 默认不会实现任何一个）
+</div>
+
+<!-- ===== CH2 ===== -->
+<h1>第二章　AI编程工具全景扫描</h1>
+
+<h2>2.1 OpenAI Codex CLI</h2>
+<p>Codex 是当前游戏开发最热门的 AI 编程代理。支持 GPT-5-Codex 模型、沙盒执行、<strong>AGENTS.md</strong> 自动加载、Skills 系统和 Playwright 浏览器测试。</p>
+
+<h3>官方推荐游戏开发流程（7 步）</h3>
+<div class="card">
+<ol style="padding-left:24px;line-height:2.2">
+  <li><strong>Plan 模式</strong> — 先让 Codex 写计划，不直接写代码（减少返工 85%）</li>
+  <li><strong>AGENTS.md</strong> — 定义技术栈、编码规范、游戏规则</li>
+  <li><strong>可玩循环</strong> — 先做最小可玩单元：移动+跳跃+地面+得分</li>
+  <li><strong>Playwright 测试</strong> — 在沙盒浏览器中实时验证</li>
+  <li><strong>UI 调优</strong> — 逐个添加 HUD、菜单、控制</li>
+  <li><strong>复杂逻辑</strong> — 自评估循环处理敌人 AI、物理系统</li>
+  <li><strong>部署审查</strong> — GitHub 自动代码审查</li>
+</ol>
+</div>
+
+<h3>Codex Game Studio 插件（AICU 日本）</h3>
+<ul>
+  <li>推荐 <strong>Phaser 引擎</strong>作为 2D 游戏框架（AI 训练数据最丰富）</li>
+  <li>三文件工作流：<strong>SKILL.md</strong> + <strong>DESIGN-DOCUMENT.md</strong> + <strong>PROGRESS.md</strong></li>
+  <li>将 Phaser API 文档 URL 提供给 AI 作为上下文可大幅提升代码质量</li>
+  <li>AICU 团队每月花费约 100 万日元（约 5 万人民币）Codex token 开发游戏</li>
+</ul>
+
+<h2>2.2 Google Antigravity CLI</h2>
+<p>2026 年 5 月推出，取代 Gemini CLI。命令 <code>agy</code>，支持异步子代理并行执行。</p>
+<table>
+  <thead><tr><th>特性</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td>模型支持</td><td>Gemini 3.5 Flash / 3.1 Pro / Claude Sonnet / Opus</td></tr>
+    <tr><td>异步子代理</td><td>可并行派发长任务，前台继续交互</td></tr>
+    <tr><td>文件引用</td><td>@src/main.go 引用文件，@src/ 引用目录</td></tr>
+    <tr><td>迁移</td><td>agy plugin import gemini 一键从 Gemini CLI 迁移</td></tr>
+  </tbody>
+</table>
+
+<h2>2.3 Cursor IDE</h2>
+<p>Vibe Coding 社区最流行工具，2025 年营收达 <strong>20 亿美元</strong>（年化）。Composer 2.5 支持多文件并行编辑。</p>
+<ul>
+  <li><strong>可视化 Diff</strong> — 直接审查每一行 AI 变更</li>
+  <li><strong>图片输入 Prompt</strong> — 用截图描述画面效果，比文字有效 10 倍</li>
+  <li><strong>Agent 模式</strong> — AI 自主执行多步操作</li>
+  <li><strong>Project Rules</strong> — 统一 AI 行为的全局规则</li>
+</ul>
+
+<h2>2.4 工具选择建议</h2>
+<table>
+  <thead><tr><th>场景</th><th>推荐工具</th><th>理由</th></tr></thead>
+  <tbody>
+    <tr><td>2D 平台跳跃</td><td>Codex CLI + Phaser</td><td>Phaser 训练数据最多，沙盒安全</td></tr>
+    <tr><td>3D 赛车</td><td>Antigravity + Three.js</td><td>免费额度大，多模型，子代理并行</td></tr>
+    <tr><td>快速原型</td><td>Cursor IDE</td><td>可视化编辑最快</td></tr>
+    <tr><td>复杂调试</td><td>Claude Code</td><td>推理能力最强</td></tr>
+    <tr><td>零基础新手</td><td>Cursor IDE</td><td>学习曲线最平缓</td></tr>
+  </tbody>
+</table>
+
+<!-- ===== CH3 ===== -->
+<h1>第三章　差距诊断：为什么 AI 游戏"能玩但不好玩"</h1>
+
+<h2>3.1 原型 vs 商业化差距清单</h2>
+<table>
+  <thead><tr><th>维度</th><th>AI 原型</th><th>商业化水准</th><th>差距原因</th></tr></thead>
+  <tbody>
+    <tr><td>操控手感</td><td>生硬、无惯性</td><td>丝滑、有重量感</td><td>缺少加速/摩擦/土狼时间</td></tr>
+    <tr><td>视觉反馈</td><td>静态、无特效</td><td>粒子/震屏/闪光</td><td>AI 不知道要加 Game Juice</td></tr>
+    <tr><td>音效</td><td>无或单一</td><td>分层音效 + BGM</td><td>需手动集成音频系统</td></tr>
+    <tr><td>关卡设计</td><td>平坦无挑战</td><td>渐进难度、隐藏区域</td><td>AI 缺乏关卡设计经验</td></tr>
+    <tr><td>UI/UX</td><td>简陋或无</td><td>精致 HUD、菜单、教程</td><td>AI 优先实现功能</td></tr>
+    <tr><td>动画</td><td>僵硬或无</td><td>帧动画、过渡效果</td><td>需 sprite sheet 和状态机</td></tr>
+    <tr><td>留存</td><td>无</td><td>成就、排行榜、每日</td><td>需后端和社交系统</td></tr>
+    <tr><td>变现</td><td>无</td><td>广告/IAP/订阅</td><td>需 SDK 集成</td></tr>
+  </tbody>
+</table>
+
+<h2>3.2 Game Feel 的 12 个核心要素</h2>
+<div class="callout">
+  <strong>关键发现：</strong>AI 编程工具默认不会主动实现以下任何一个要素！这些都必须在 AGENTS.md 或 prompt 中明确要求。
+</div>
+
+<div class="flex-row">
+  <div class="card">
+    <h3>移动与跳跃</h3>
+    <ul>
+      <li><strong>加速度与摩擦力</strong>：MOVE_ACCEL=1400, GROUND_DRAG=1200, AIR_DRAG=200</li>
+      <li><strong>土狼时间</strong>：离开平台后 90ms 内仍可跳跃</li>
+      <li><strong>跳跃缓冲</strong>：落地前 100ms 按跳跃仍有效</li>
+      <li><strong>可变高度跳跃</strong>：按住跳高，轻点跳低（松开速度减半）</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>视觉与打击感</h3>
+    <ul>
+      <li><strong>屏幕震动</strong>：踩踏/受击时画面抖动，指数衰减</li>
+      <li><strong>粒子效果</strong>：跳跃扬尘、着陆冲击、收集闪光</li>
+      <li><strong>挤压拉伸</strong>：起跳压扁、空中拉长（迪士尼原则 #1）</li>
+      <li><strong>命中暂停</strong>：攻击命中冻结 3-5 帧增加冲击感</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>相机与感知</h3>
+    <ul>
+      <li><strong>相机延迟</strong>：lerp=0.08 平滑跟随</li>
+      <li><strong>相机死区</strong>：60×40px 内不跟随</li>
+      <li><strong>音效分层</strong>：跳跃/着陆/收集各有独立音效</li>
+      <li><strong>视觉提示</strong>：收集品浮动+发光</li>
+    </ul>
+  </div>
+</div>
+
+<h2>3.3 商业化水准量化标准</h2>
+<table>
+  <thead><tr><th>指标</th><th>及格线</th><th>优秀线</th><th>测量工具</th></tr></thead>
+  <tbody>
+    <tr><td>首日留存</td><td>&gt;25%</td><td>&gt;40%</td><td>Firebase Analytics</td></tr>
+    <tr><td>7日留存</td><td>&gt;8%</td><td>&gt;15%</td><td>Firebase Analytics</td></tr>
+    <tr><td>平均时长/次</td><td>&gt;3分钟</td><td>&gt;8分钟</td><td>会话统计</td></tr>
+    <tr><td>eCPM</td><td>&gt;$5</td><td>&gt;$15</td><td>AdMob 后台</td></tr>
+    <tr><td>崩溃率</td><td>&lt;2%</td><td>&lt;0.5%</td><td>Crashlytics</td></tr>
+    <tr><td>帧率</td><td>稳定 30fps</td><td>稳定 60fps</td><td>DevTools</td></tr>
+    <tr><td>包体</td><td>&lt;20MB</td><td>&lt;5MB</td><td>构建产物</td></tr>
+  </tbody>
+</table>
+
+<!-- ===== CH4 ===== -->
+<h1>第四章　商业化游戏技术架构</h1>
+
+<h2>4.1 引擎选型对比</h2>
+<table>
+  <thead><tr><th>引擎</th><th>类型</th><th>适合</th><th>AI 友好度</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Phaser 3</strong></td><td>2D 框架</td><td>平台跳跃/解谜</td><td>⭐⭐⭐⭐⭐ 极高</td></tr>
+    <tr><td>Three.js</td><td>3D 库</td><td>3D 赛车/飞行</td><td>⭐⭐⭐⭐ 高</td></tr>
+    <tr><td>PixiJS</td><td>2D 渲染</td><td>高性能 2D</td><td>⭐⭐⭐⭐ 高</td></tr>
+    <tr><td>Construct 3</td><td>可视化</td><td>各类 2D</td><td>⭐⭐⭐ 中</td></tr>
+    <tr><td>Babylon.js</td><td>3D 引擎</td><td>3D 竞速</td><td>⭐⭐⭐ 中</td></tr>
+    <tr><td>Cocos Creator</td><td>全功能</td><td>2D/3D 手游</td><td>⭐⭐⭐ 中</td></tr>
+  </tbody>
+</table>
+
+<h2>4.2 平台跳跃游戏架构（Phaser 3）</h2>
+
+<h3>核心物理参数</h3>
+<div class="code-block">MOVE_ACCEL    = 1400      // 水平加速度 (px/s²)
+MAX_SPEED     = 220       // 最大水平速度
+GROUND_DRAG   = 1200      // 地面摩擦力
+AIR_DRAG      = 200       // 空气阻力 (= 地面 1/6)
+JUMP_VEL      = -420      // 初始跳跃速度
+JUMP_HOLD     = 150       // 按住跳跃额外时间 (ms)
+JUMP_HOLD_ACC = -1100     // 按住时额外上升力
+COYOTE_MS     = 90        // 土狼时间 (ms)
+JUMP_BUF_MS   = 100       // 跳跃缓冲 (ms)
+WALL_JUMP_X   = 260       // 蹬墙跳水平
+WALL_JUMP_Y   = -380      // 蹬墙跳垂直
+WALL_SLIDE    = 80        // 贴墙下滑限速</div>
+
+<h3>项目目录结构</h3>
+<div class="code-block">my-platformer/
+  src/
+    scenes/        # Boot → Menu → Game → Victory
+    entities/      # Player.ts, Enemy.ts, MovingPlatform.ts
+    systems/       # CameraSystem, ParticleSystem, Audio, UI
+    config/        # constants.ts, levels.ts
+  public/assets/
+    sprites/       # 角色精灵图
+    tilesets/      # 地形图块
+    audio/         # 音效和 BGM
+  AGENTS.md        # AI 项目规范
+  SKILL.md         # AI 技能文件</div>
+
+<h3>相机系统</h3>
+<div class="code-block">cameras.main.setBounds(0, 0, levelWidth, levelHeight)
+cameras.main.startFollow(player, true, 0.08, 0.08)  // lerp=8%
+cameras.main.setDeadzone(60, 40)                      // 60×40 死区</div>
+
+<h3>瓦片地图编码</h3>
+<table>
+  <thead><tr><th>值</th><th>类型</th><th>用途</th></tr></thead>
+  <tbody>
+    <tr><td>0</td><td>EMPTY</td><td>空气</td></tr>
+    <tr><td>1</td><td>SOLID</td><td>地面/墙壁</td></tr>
+    <tr><td>2</td><td>SPIKE</td><td>尖刺（即死）</td></tr>
+    <tr><td>3</td><td>GEM</td><td>收集品</td></tr>
+    <tr><td>4</td><td>ENEMY_SPAWN</td><td>敌人生成点</td></tr>
+    <tr><td>5</td><td>PLAYER_START</td><td>玩家出生点</td></tr>
+    <tr><td>6</td><td>EXIT_DOOR</td><td>关卡出口</td></tr>
+    <tr><td>7</td><td>MOVING_PLAT</td><td>移动平台</td></tr>
+    <tr><td>8</td><td>CRUMBLE</td><td>崩塌平台</td></tr>
+  </tbody>
+</table>
+
+<h2>4.3 3D 赛车游戏架构</h2>
+<table>
+  <thead><tr><th>组件</th><th>技术</th><th>用途</th></tr></thead>
+  <tbody>
+    <tr><td>3D 渲染</td><td>Three.js</td><td>场景、相机、灯光、模型</td></tr>
+    <tr><td>物理引擎</td><td>Cannon.js / Rapier</td><td>碰撞检测、车辆物理</td></tr>
+    <tr><td>赛道生成</td><td>ExtrudeGeometry</td><td>从 2D 路径挤出 3D 赛道</td></tr>
+    <tr><td>粒子效果</td><td>Three.js Points</td><td>尾气、火花、尘土</td></tr>
+    <tr><td>音效</td><td>Tone.js</td><td>引擎声、碰撞声、BGM</td></tr>
+  </tbody>
+</table>
+
+<!-- ===== CH5 ===== -->
+<h1>第五章　七大实战案例深度解析</h1>
+
+<h2>案例 1：fly.pieter.com — 3 小时 AI 开发，9 天赚 $17,360</h2>
+<div class="card">
+<table>
+  <thead><tr><th colspan="2" style="text-align:center;font-size:16px">fly.pieter.com — MMO 飞行模拟器</th></tr></thead>
+  <tbody>
+    <tr><td style="width:120px"><strong>开发者</strong></td><td>Pieter Levels (@levelsio)</td></tr>
+    <tr><td><strong>开发时间</strong></td><td><span style="color:#F59E0B;font-weight:700">3 小时</span></td></tr>
+    <tr><td><strong>AI 工具</strong></td><td>Cursor（主开发）+ Grok-3（服务器）+ Claude（飞行动力学）</td></tr>
+    <tr><td><strong>技术栈</strong></td><td>Three.js + WebSocket + Node.js</td></tr>
+    <tr><td><strong>营收</strong></td><td>9 天 $17,360 → 月 $87,000 → 峰值月 <strong>$100K+</strong></td></tr>
+    <tr><td><strong>变现</strong></td><td>广告飞艇 $2,500/月/个 + F-16 战机售卖</td></tr>
+  </tbody>
+</table>
+</div>
+<ul>
+  <li>纯 Web 技术（Three.js），无需安装，打开即玩</li>
+  <li>AI 分工：Cursor 写主体、Grok-3 做多人同步（10次/秒）、Claude 优化物理</li>
+  <li>变现创新：在游戏世界中放置广告飞艇，类似 Fortnite 虚拟广告</li>
+  <li>黑客注入外星人代码 → 开发者保留并变成正式功能</li>
+</ul>
+
+<h2>案例 2：Gothicvania — Codex CLI 零代码平台跳跃</h2>
+<div class="card">
+<table>
+  <thead><tr><th colspan="2" style="text-align:center;font-size:16px">Gothicvania Codex Demo</th></tr></thead>
+  <tbody>
+    <tr><td style="width:120px"><strong>开发者</strong></td><td>acatovic（OpenAI 社区）</td></tr>
+    <tr><td><strong>AI 工具</strong></td><td>Codex CLI + Agent Skills</td></tr>
+    <tr><td><strong>代码贡献</strong></td><td><span style="color:#10B981;font-weight:700">零</span> — 开发者从未查看 Phaser API</td></tr>
+    <tr><td><strong>技术栈</strong></td><td>Phaser 3 (HTML5)</td></tr>
+    <tr><td><strong>方法论</strong></td><td>SKILL.md + DESIGN-DOCUMENT.md + PROGRESS.md</td></tr>
+  </tbody>
+</table>
+</div>
+<ul>
+  <li>核心方法论：三文件工作流，Phaser API 文档 URL 作为 AI 上下文</li>
+  <li>社区反馈驱动迭代：初始版不支持方向键和空格 → 快速修复</li>
+  <li>证明了 Codex CLI + Agent Skills 可零代码完成商业品质 2D 游戏</li>
+</ul>
+
+<h2>案例 3-7 速览</h2>
+<table>
+  <thead><tr><th>案例</th><th>AI 工具</th><th>时间</th><th>亮点</th></tr></thead>
+  <tbody>
+    <tr><td><strong>BibaDamu</strong></td><td>Cursor + Three.js</td><td>2 周</td><td>成本仅 $20 做出 3D 赛车</td></tr>
+    <tr><td><strong>Curve Clash</strong></td><td>多工具</td><td>6 个月 500h</td><td>38 岁会计师无编程经验</td></tr>
+    <tr><td><strong>Star Picker</strong></td><td>Codex Game Studio</td><td>数周</td><td>OpenAI 官方推荐教程</td></tr>
+    <tr><td><strong>iOS 游戏</strong></td><td>Cursor AI</td><td>7 天</td><td>7 天开发并上架 App Store</td></tr>
+    <tr><td><strong>Clue Rush</strong></td><td>Cursor Agent</td><td>数周</td><td>AI Agent 自动化开发</td></tr>
+  </tbody>
+</table>
+
+<!-- ===== CH6 ===== -->
+<h1>第六章　教育游戏设计：英语学习 × 游戏融合</h1>
+
+<h2>6.1 游戏化教育理论基础</h2>
+<p>ScienceDirect 系统性综述（21 项实证研究）验证了游戏化外语学习的有效性：</p>
+<ul>
+  <li><strong>即时反馈</strong>是最有效的学习驱动因素</li>
+  <li>游戏元素（XP、排行榜、徽章）显著提升学习动力</li>
+  <li><strong>间隔重复</strong>结合游戏机制可提升记忆保留率 <strong>30%+</strong></li>
+</ul>
+
+<h2>6.2 Duolingo 八核驱动框架（Octalysis）</h2>
+<p>Duolingo 拥有 4.77 亿日活用户，其成功归功于 Octalysis 八核驱动：</p>
+<table>
+  <thead><tr><th>核心驱动</th><th>Duolingo 策略</th><th>可借鉴到英语游戏</th></tr></thead>
+  <tbody>
+    <tr><td>史诗意义感</td><td>让用户感到被需要</td><td>设定"拯救单词王国"叙事</td></tr>
+    <tr><td>进步与成就</td><td>XP、等级、排行榜</td><td>通关 = 掌握一组单词</td></tr>
+    <tr><td>创造力反馈</td><td>错误变学习机会</td><td>答错不扣命，弹出教学</td></tr>
+    <tr><td>拥有感</td><td>头像、连胜、宝石</td><td>角色装备用单词解锁</td></tr>
+    <tr><td>社交影响</td><td>好友系统、联赛</td><td>在线排行榜、好友 PK</td></tr>
+    <tr><td>稀缺与渴望</td><td>限时挑战</td><td>每日限定关卡、限时 Boss</td></tr>
+    <tr><td>好奇心</td><td>锁定关卡、跳级</td><td>隐藏关卡需解锁</td></tr>
+    <tr><td>损失恐惧</td><td>连胜保护</td><td>连续登录奖励</td></tr>
+  </tbody>
+</table>
+
+<h2>6.3 三套融合设计方案</h2>
+
+<div class="card">
+  <h3>方案 A：单词跳跃（Word Jumper）</h3>
+  <p>玩家在平台上跳跃收集字母，按正确顺序拼出单词才能过关。</p>
+  <ul>
+    <li>每关一组目标单词（如 10 个水果类词汇）</li>
+    <li>字母随机散布，需按正确顺序收集</li>
+    <li>Boss 战 = 看中文释义，跳到正确英文单词平台</li>
+    <li>每关结束后显示单词本，可复习</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>方案 B：语法赛车（Grammar Racer）</h3>
+  <p>赛道分叉为 2-3 条路，每条标注不同语法选项。选对加速，选错减速+弹出解析。</p>
+  <ul>
+    <li>例如：路面"I ___ happy"，三条路 am/is/are</li>
+    <li>每圈 5-10 个语法挑战</li>
+    <li>竞速模式：好友 PK</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>方案 C：单词射击（Word Shooter）</h3>
+  <p>自动横向卷轴，天空掉落英文单词气球，底部显示中文释义，射击正确单词。</p>
+  <ul>
+    <li>同时出现 3-5 个单词气球</li>
+    <li>难度递进：单词更难、速度更快、干扰更多</li>
+  </ul>
+</div>
+
+<!-- ===== CH7 ===== -->
+<h1>第七章　美术与音效资源完全指南</h1>
+
+<h2>免费商用美术资源</h2>
+<table>
+  <thead><tr><th>资源站</th><th>素材类型</th><th>授权</th><th>亮点</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Kenney.nl</strong></td><td>2D/3D/UI/音频</td><td>CC0（公有领域）</td><td>30,000+ 素材</td></tr>
+    <tr><td>OpenGameArt.org</td><td>2D/3D/音频</td><td>混合（注意查看）</td><td>种类最全</td></tr>
+    <tr><td>itch.io</td><td>2D 像素/音效</td><td>各不相同</td><td>精品多</td></tr>
+    <tr><td>CraftPix.net</td><td>2D 精灵/瓦片</td><td>免费版需署名</td><td>质量高</td></tr>
+    <tr><td>Game-icons.net</td><td>40,000+ 图标</td><td>CC-BY</td><td>SVG 可定制</td></tr>
+    <tr><td>Sketchfab</td><td>3D 模型</td><td>搜索 CC 许可</td><td>免费商用</td></tr>
+  </tbody>
+</table>
+
+<h3>推荐素材包</h3>
+<ul>
+  <li><strong>Kenney - New Platformer Pack</strong>：完整 2D 平台跳跃瓦片集和角色</li>
+  <li><strong>Kenney - Car Kit</strong>：3D 汽车模型，适合赛车游戏</li>
+  <li><strong>Gothicvania (ansimuz)</strong>：暗黑像素平台跳跃完整包（Codex 案例使用）</li>
+  <li><strong>Pixel Adventure (pixelfrog)</strong>：600+ 精灵，含角色和敌人</li>
+</ul>
+
+<h2>音效与音乐</h2>
+<table>
+  <thead><tr><th>工具</th><th>用途</th><th>说明</th></tr></thead>
+  <tbody>
+    <tr><td>Suno AI</td><td>BGM 生成</td><td>从文字描述生成完整音乐</td></tr>
+    <tr><td>Tone.js</td><td>程序化音效</td><td>浏览器端动态音效</td></tr>
+    <tr><td>ElevenLabs</td><td>角色语音</td><td>NPC 对话、教学旁白</td></tr>
+    <tr><td>Kenney 音频包</td><td>音效库</td><td>CC0 授权游戏音效</td></tr>
+    <tr><td>Audacity</td><td>音频编辑</td><td>免费开源</td></tr>
+  </tbody>
+</table>
+
+<!-- ===== CH8 ===== -->
+<h1>第八章　变现模式与增长策略</h1>
+
+<h2>变现模式</h2>
+<table>
+  <thead><tr><th>模式</th><th>eCPM</th><th>适合阶段</th></tr></thead>
+  <tbody>
+    <tr><td><strong>激励视频广告</strong></td><td>$10-50</td><td>上线即可</td></tr>
+    <tr><td>插屏广告</td><td>$3-15</td><td>有用户量后</td></tr>
+    <tr><td>横幅广告</td><td>$0.5-3</td><td>补充收入</td></tr>
+    <tr><td>内购（IAP）</td><td>ARPU $0.5-5</td><td>需 IAP 系统</td></tr>
+    <tr><td>订阅制</td><td>$2-10/月/用户</td><td>内容持续更新</td></tr>
+    <tr><td>品牌合作</td><td>$500-5000/月</td><td>有流量后</td></tr>
+  </tbody>
+</table>
+
+<h2>留存策略</h2>
+<table>
+  <thead><tr><th>策略</th><th>效果</th><th>实现</th></tr></thead>
+  <tbody>
+    <tr><td>每日签到</td><td>日活 +15-25%</td><td>连续登录奖励翻倍</td></tr>
+    <tr><td>每日挑战</td><td>7日留存 +10-20%</td><td>每天新单词/新关卡</td></tr>
+    <tr><td>排行榜</td><td>长期留存 +20-30%</td><td>全球+好友双排名</td></tr>
+    <tr><td>成就系统</td><td>时长 +30%</td><td>徽章和称号</td></tr>
+    <tr><td>社交分享</td><td>获客成本 -50%</td><td>分享到微信/微博</td></tr>
+  </tbody>
+</table>
+
+<h2>发布平台</h2>
+<ul>
+  <li><strong>微信小游戏</strong>（首选）：中国最大流量入口，认证 300 元/年</li>
+  <li><strong>CrazyGames / Poki</strong>：全球 HTML5 游戏门户，50M+ 月活</li>
+  <li><strong>独立网站</strong>：完全控制，无分成</li>
+  <li><strong>App Store / Google Play</strong>：后期扩展</li>
+</ul>
+
+<!-- ===== CH9 ===== -->
+<h1>第九章　AI 工具高级使用技巧</h1>
+
+<h2>9.1 AGENTS.md 最佳实践</h2>
+<div class="code-block"># AGENTS.md
+
+## 项目：英语学习平台跳跃游戏
+## 引擎：Phaser 3.80 + TypeScript
+## 构建：Vite
+
+## 编码规范
+- 所有物理常量集中在 src/config/constants.ts
+- 使用状态机模式管理角色状态
+- 每个Entity独立一个文件
+- 禁止使用 any 类型
+
+## 游戏特定规则
+- 角色跳跃必须实现土狼时间(90ms)和跳跃缓冲(100ms)
+- 相机使用 lerp=0.08 的平滑跟随
+- 踩踏敌人触发屏幕震动(强度0.01, 持续100ms)
+- 错误答案不直接结束游戏，弹出教学卡片
+- 每关 6-10 个目标单词
+
+## 测试要求
+- pnpm test (Playwright 测试)
+- 修改物理参数后需手动测试跳跃手感</div>
+
+<h2>9.2 核心 Prompt 示例</h2>
+
+<h3>角色控制器 Prompt</h3>
+<div class="code-block">使用 Phaser 3 + TypeScript 创建平台跳跃角色控制器。
+
+要求：
+1. 基于加速度的运动模型（不是直接设velocity）
+2. MOVE_ACCEL=1400, GROUND_DRAG=1200, AIR_DRAG=200
+3. 可变高度跳跃（按住跳得高，轻点跳得低）
+4. 土狼时间 90ms
+5. 跳跃缓冲 100ms
+6. 最大水平速度 220px/s
+7. 角色碰撞框 16x26，偏移(8,4)
+
+参考 src/config/constants.ts 中的参数定义。
+遵循 AGENTS.md 中的编码规范。</div>
+
+<h3>教学卡片系统 Prompt</h3>
+<div class="code-block">创建英语教学卡片弹窗系统。
+
+当玩家收集字母顺序错误时：
+1. 游戏暂停（不结束）
+2. 弹出教学卡片：正确拼写 + 音标 + 中文释义 + 例句
+3. 卡片有淡入动画（200ms）
+4. 玩家点击"我知道了"后继续游戏
+5. 错词记录到复习列表
+
+UI风格：圆角白色卡片，深蓝色标题，灯泡图标</div>
+
+<h2>9.3 30 条黄金法则摘要（Indie Hackers）</h2>
+<div class="flex-row">
+  <div class="card">
+    <h3>规划</h3>
+    <ul>
+      <li>先用 ChatGPT/Grok 写计划再让 Cursor 执行（减幻觉 85%）</li>
+      <li>生成多个初始版本，选最好的</li>
+      <li>设置 Project Rules 统一 AI 行为</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>开发</h3>
+    <ul>
+      <li>每次只做一个小的局部改动</li>
+      <li>频繁 commit 创建回滚点</li>
+      <li>图片描述画面比文字有效 10 倍</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>调试</h3>
+    <ul>
+      <li>调试超 2 小时就回退重写 prompt</li>
+      <li>让 AI 写单元测试和集成测试</li>
+      <li>保留"接下来 10 个 prompt"列表</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== CH10 ===== -->
+<h1>第十章　30 天从零到上线路线图</h1>
+
+<h2>阶段一：基础架构（Day 1-5）</h2>
+<table>
+  <thead><tr><th>天</th><th>任务</th><th>交付物</th></tr></thead>
+  <tbody>
+    <tr><td>Day 1</td><td>项目初始化 + AGENTS.md</td><td>项目骨架</td></tr>
+    <tr><td>Day 2</td><td>核心游戏循环：移动+跳跃+碰撞</td><td>可移动角色场景</td></tr>
+    <tr><td>Day 3</td><td>瓦片地图系统 + 关卡加载</td><td>可跑测试关卡</td></tr>
+    <tr><td>Day 4</td><td>相机系统 + 粒子效果</td><td>流畅相机 + 跳跃扬尘</td></tr>
+    <tr><td>Day 5</td><td>HUD + 主菜单</td><td>完整 UI 系统</td></tr>
+  </tbody>
+</table>
+
+<h2>阶段二：游戏机制（Day 6-12）</h2>
+<table>
+  <thead><tr><th>天</th><th>任务</th><th>交付物</th></tr></thead>
+  <tbody>
+    <tr><td>Day 6</td><td>字母收集 + 单词拼写判定</td><td>拼单词机制</td></tr>
+    <tr><td>Day 7</td><td>教学卡片系统</td><td>答错教学弹窗</td></tr>
+    <tr><td>Day 8</td><td>敌人 AI（巡逻+跳跃）</td><td>两种敌人</td></tr>
+    <tr><td>Day 9</td><td>踩踏机制 + 屏幕震动</td><td>打击感</td></tr>
+    <tr><td>Day 10</td><td>移动平台 + 崩塌平台</td><td>高级平台</td></tr>
+    <tr><td>Day 11</td><td>Boss 战（中译英选择）</td><td>Boss 关卡</td></tr>
+    <tr><td>Day 12</td><td>Game Juice 全面打磨</td><td>Squash/Stretch + HitStop</td></tr>
+  </tbody>
+</table>
+
+<h2>阶段三：内容与美术（Day 13-20）</h2>
+<table>
+  <thead><tr><th>天</th><th>任务</th><th>交付物</th></tr></thead>
+  <tbody>
+    <tr><td>Day 13</td><td>设计 10 个关卡</td><td>关卡数据</td></tr>
+    <tr><td>Day 14</td><td>集成美术素材包</td><td>替换占位图形</td></tr>
+    <tr><td>Day 15</td><td>角色帧动画</td><td>精灵表动画</td></tr>
+    <tr><td>Day 16</td><td>背景视差滚动</td><td>多层背景</td></tr>
+    <tr><td>Day 17</td><td>Suno BGM + 音效集成</td><td>完整音频</td></tr>
+    <tr><td>Day 18</td><td>单词数据库（500+ 词分级）</td><td>CEFR 分级 JSON</td></tr>
+    <tr><td>Day 19</td><td>间隔重复算法</td><td>错词复习机制</td></tr>
+    <tr><td>Day 20</td><td>教程关卡 + 新手引导</td><td>零基础上手</td></tr>
+  </tbody>
+</table>
+
+<h2>阶段四：商业化上线（Day 21-30）</h2>
+<table>
+  <thead><tr><th>天</th><th>任务</th><th>交付物</th></tr></thead>
+  <tbody>
+    <tr><td>Day 21</td><td>广告 SDK (AdMob/穿山甲)</td><td>激励视频+横幅</td></tr>
+    <tr><td>Day 22</td><td>内购系统</td><td>IAP 流程</td></tr>
+    <tr><td>Day 23</td><td>排行榜 + 成就</td><td>Firebase 集成</td></tr>
+    <tr><td>Day 24</td><td>微信小游戏适配</td><td>小程序版</td></tr>
+    <tr><td>Day 25</td><td>性能优化（60fps）</td><td>帧率稳定+包体&lt;5MB</td></tr>
+    <tr><td>Day 26</td><td>多设备测试</td><td>兼容性修复</td></tr>
+    <tr><td>Day 27</td><td>隐私政策 + 合规</td><td>合规文档</td></tr>
+    <tr><td>Day 28</td><td>商店素材</td><td>截图/描述/视频</td></tr>
+    <tr><td>Day 29</td><td>Beta 测试 + 修 Bug</td><td>稳定版</td></tr>
+    <tr><td><strong>Day 30</strong></td><td><strong>正式上线！</strong></td><td>🎉 发布 + 推广</td></tr>
+  </tbody>
+</table>
+
+<h2>预估成本</h2>
+<div class="card" style="text-align:center">
+  <div class="stats-grid">
+    <div class="stat"><div class="num">$200</div><div class="label">AI 编程/月</div></div>
+    <div class="stat"><div class="num">$10</div><div class="label">Suno AI/月</div></div>
+    <div class="stat"><div class="num">$0</div><div class="label">美术素材</div></div>
+    <div class="stat"><div class="num">$10</div><div class="label">域名服务器</div></div>
+  </div>
+  <p style="font-size:20px;color:var(--blue-light);font-weight:700;margin-top:16px">总启动成本：约 $220（¥1,600）</p>
+</div>
+
+<!-- ===== APPENDIX A ===== -->
+<h1>附录 A：AGENTS.md 完整模板</h1>
+<div class="code-block"># AGENTS.md
+
+## 项目：[你的游戏名称]
+## 类型：2D平台跳跃 + 英语学习
+## 引擎：Phaser 3.80 + TypeScript
+## 构建：Vite 5.x
+
+## 开发环境
+- Node.js 20+
+- pnpm（包管理器）
+
+## 目录结构
+src/scenes/       游戏场景
+src/entities/     游戏实体
+src/systems/      系统管理器
+src/config/       常量和配置
+public/assets/    静态资源
+
+## 编码规范
+1. TypeScript strict mode
+2. 每个类一个文件
+3. 物理常量集中在 config/constants.ts
+4. 使用状态机模式管理角色状态
+5. 所有 UI 文本支持 i18n
+6. 禁止使用 any 类型
+
+## 游戏设计规范
+1. 角色跳跃实现土狼时间(90ms)和跳跃缓冲(100ms)
+2. 所有可收集物品有浮动动画(Sine.easeInOut)
+3. 相机 lerp=8% + 死区 60×40
+4. 踩踏触发屏幕震动(0.01, 100ms)
+5. 错误答案弹教学卡片，不结束游戏
+6. 每关 6-10 个目标单词
+
+## 性能目标
+- 稳定 60fps
+- 首次加载 &lt; 3秒
+- 包体 &lt; 5MB</div>
+
+<!-- ===== APPENDIX B ===== -->
+<h1>附录 B：GDD 游戏设计文档模板</h1>
+<div class="code-block"># 游戏设计文档 (GDD)
+
+## 1. 游戏概述
+- 名称 / 一句话描述 / 目标平台 / 目标受众
+
+## 2. 核心玩法
+- 核心循环：移动 → 收集/答题 → 得分 → 遇敌 → 战斗 → 下一关
+- 操作方式 / 胜利条件 / 失败条件
+
+## 3. 教育融合
+- 学习目标 / 知识点列表
+- 正确答案 → 加速/得分 | 错误答案 → 教学弹窗
+- 复习机制 → 间隔重复(SM-2算法)
+
+## 4. 关卡设计
+- 关卡数量 / 难度曲线 / 每关新元素
+- 关卡 1 详细：布局 + 目标单词 + 敌人配置 + 通关时间
+
+## 5. 角色与敌人
+- 主角：外观 / 特殊能力 / 动画列表
+- 敌人类型：行为模式 / 弱点
+- Boss：特殊机制
+
+## 6. 进度与经济
+- 经验值/等级 / 货币 / 解锁条件 / 商店物品
+
+## 7. 音效与视觉
+- 美术风格参考 / 配色 / BGM 风格 / 核心音效
+
+## 8. 商业化计划
+- 变现模式 / 定价策略 / 预期 DAU / 预期 ARPU</div>
+
+<!-- ===== APPENDIX C ===== -->
+<h1>附录 C：参考资源与链接汇总</h1>
+
+<h2>AI 编程工具</h2>
+<table>
+  <thead><tr><th>资源</th><th>URL</th></tr></thead>
+  <tbody>
+    <tr><td>OpenAI Codex 文档</td><td>developers.openai.com/codex</td></tr>
+    <tr><td>Codex 游戏开发用例</td><td>developers.openai.com/codex/use-cases/collections/game-development</td></tr>
+    <tr><td>Codex 最佳实践</td><td>developers.openai.com/codex/learn/best-practices</td></tr>
+    <tr><td>Antigravity CLI 教程</td><td>dev.to/arindam_1729/antigravity-cli</td></tr>
+    <tr><td>Cursor IDE</td><td>cursor.com</td></tr>
+  </tbody>
+</table>
+
+<h2>实战案例</h2>
+<table>
+  <thead><tr><th>案例</th><th>URL</th></tr></thead>
+  <tbody>
+    <tr><td>fly.pieter.com</td><td>fly.pieter.com</td></tr>
+    <tr><td>Gothicvania Codex Demo</td><td>github.com/acatovic/gothicvania-codex-demo</td></tr>
+    <tr><td>Codex Game Studio 教程</td><td>note.com/aicu/n/n0af2c2714099</td></tr>
+    <tr><td>Cursor 游戏终极指南</td><td>indiehackers.com/post/a7E47ctWdIoBMrsMZTrF</td></tr>
+    <tr><td>AI Built Games 合集</td><td>aibuiltgames.com</td></tr>
+  </tbody>
+</table>
+
+<h2>免费素材</h2>
+<table>
+  <thead><tr><th>资源</th><th>URL</th></tr></thead>
+  <tbody>
+    <tr><td>Kenney 素材（30,000+）</td><td>kenney.nl/assets</td></tr>
+    <tr><td>OpenGameArt</td><td>opengameart.org</td></tr>
+    <tr><td>itch.io 免费素材</td><td>itch.io/game-assets/free</td></tr>
+    <tr><td>CraftPix 免费包</td><td>craftpix.net/freebies</td></tr>
+    <tr><td>Game Icons</td><td>game-icons.net</td></tr>
+  </tbody>
+</table>
+
+<h2>教育 & 变现</h2>
+<table>
+  <thead><tr><th>资源</th><th>URL</th></tr></thead>
+  <tbody>
+    <tr><td>Duolingo 游戏化分析</td><td>raw.studio/blog/how-duolingo-utilises-gamification</td></tr>
+    <tr><td>游戏化教育综述</td><td>pmc.ncbi.nlm.nih.gov/articles/PMC10135444</td></tr>
+    <tr><td>HTML5 变现策略</td><td>playgama.com/blog/effective-strategies</td></tr>
+    <tr><td>CrazyGames 平台</td><td>crazygames.com</td></tr>
+    <tr><td>Poki 平台</td><td>poki.com</td></tr>
+  </tbody>
+</table>
+
+<hr style="margin-top:60px">
+<div style="text-align:center;color:var(--text-muted);padding:40px 0">
+  <p style="font-size:18px;color:var(--blue-light)">— 报告结束 —</p>
+  <p>基于 2026 年 5-6 月公开互联网信息调研编写</p>
+  <p>15+ 信息源交叉验证 | 7 大实战案例 | 30 天完整路线图</p>
+  <p style="margin-top:16px">祝你的 AI 游戏开发之旅顺利！🎮</p>
+</div>
+
+</body>
+</html>
